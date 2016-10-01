@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Search Management</title>
+</head>
+<style>
+
+.node {
+    cursor: pointer;
+  }
+
+.overlay{
+      background-color:#EEE;
+	  max-width: 1300px;
+  }
+   
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+  }
+   
+.node text {
+    font-size:10px; 
+    font-family:sans-serif;
+  }
+   
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
+
+  .templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+  }
+
+  .ghostCircle.show{
+      display:block;
+  }
+
+  .ghostCircle, .activeDrag .ghostCircle{
+       display: none;
+  }
+  #refreshDiv{
+		cursor: pointer;
+	}
+#weeklytask{
+		cursor: pointer;
+	}
+
+	.seperator { border-right: 1px solid gray; }
+
+	
+#logoid img {
+      
+       -webkit-filter: grayscale(00%);
+       -moz-filter: grayscale(00%);
+       -o-filter: grayscale(00%);
+       -webkit-transition: all 1s ease;
+         -moz-transition: all 1s ease;
+       -o-transition: all 1s ease;
+      -ms-transition: all 1s ease;
+          transition: all 1s ease;
+
+    }
+
+#logoid:hover img {
+  -moz-transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+#borderblack{
+    border-style: solid;
+    border-color: black;
+}
+#borderblack2{
+    border-style: solid;
+    border-color: black;
+	}
+#heading{
+	align:center;
+
+}
+.bs-example{
+			margin: 20px;
+		}
+		@media screen and (min-width: 768px) {
+			.modal-dialog {
+			  width: 1000px; /* New width for default modal */
+			}
+			.modal-sm {
+			  width: 650px; /* New width for small modal */
+			}
+		}
+		@media screen and (min-width: 992px) {
+			.modal-lg {
+			  width: 1250px; /* New width for large modal */
+			}
+		}
+		
+		
+	.modal-dialog{
+		overflow-y: initial !important
+	}
+	.modal-body{
+		height: 400px;
+		overflow-y: auto;
+		margin-left: 5px;
+	}	
+	.accptance{
+	padding:10px;
+	}	
+		
+      .btn-circle {
+	  
+        border-radius: 25px;
+      }	
+
+	.foo {
+		  float:right;
+		  width: 220px;
+		  padding : 5px;
+		  height: 50px;
+		  border: 1px solid rgba(0, 0, 0, .2);
+	}
+	
+
+	.foo span:not(:first-child){
+		border-left:1px solid #000;	
+		padding:5px;
+	}
+	.foo:not(:first-child){
+    border-top:1px solid #000;
+	
+}
+.code-name{
+	padding:10px;
+}
+#filter{
+	padding-left:20px;
+	padding-bottom:20px;
+}
+
+.displaycode{
+	height:150px;
+	overflow:scroll;
+}
+</style>
+
+
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="js/scriptDomLib.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+
+<script src="js/context.js"></script>
+<link rel="stylesheet" type="text/css" href="css/context.standalone.css">
+<link rel="stylesheet" type="text/css" href="css/context.bootstrap.css">
+
+<link rel="stylesheet" href="css/defaultTheme.css">
+
+<script src="js/chosen.js"> </script> 
+<link rel="stylesheet" href="css/bootstrap-chosen.css">
+
+<script src = "js/moment.min.js"></script>
+<script type = "text/javascript" src="js/daterangepicker.js"></script>
+<link rel = "stylesheet" type="text/css" href="css/daterangepicker.css" />
+
+<link rel="stylesheet" href="css/highlight.css">
+<script src="js/codehisghlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script src="js/compiler.js"></script>
+
+	
+<body>
+
+<div class='navbar' style = 'margin-top: -5px; margin-bottom: 20px; border-bottom-width: 6px;' id = 'borderblack2'>
+	<div id="userlogodiv" style='margin-top: 4px; border-top-width: 0px; padding-top: 10px; margin-bottom: 0px; border-bottom-width: 0px; padding-bottom: 0px; height: 31px;'>
+		
+		
+		<span id = 'logoid'>
+		<img  width="366" height="72" border="0" alt="Sixth Energy Technology" style = 'float:left; margin-top: -6px; margin-left: 2%;'src="image/logo.png">	
+		</span>
+		
+		<h4 style='text-align:center;'></h4>
+	</div>
+
+	<div id="urlnumberdiv" style="float:right">
+		<div id="uname" ></div>
+
+		</div>
+
+</div> 
+
+
+<div style="width:20%; display: inline-block; overflow: hidden; border-width:2px;border-color:black;" id='borderblack'>
+
+	<div  id="filter">
+		<h3>Filter By status</h3>
+		<input type="checkbox"  id="email">Accepted</br>
+		<input type="checkbox" id="pwd">Skipped</br>
+		<input type="checkbox"  id="pwd">Memory/Time Limit Exceeded</br>
+		<input type="checkbox"  id="pwd">Runtime/compilation error</br>
+		<input type="checkbox"  id="pwd">wrong answer</br>
+	</div>
+</div>
+
+<div style="width: 75%; display: inline-block; float: left;" >
+	<div class='container-fluid' id='container1'>
+
+	</div>
+	<div class="container">
+ 
+  <ul class="pagination">
+    <li><a href="#">1</a></li>
+    <li class="active"><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+  </ul>
+</div>
+</div>
+
+
+
+<script>
+$( document ).ready(function() {
+   var saveData = $.ajax({
+      type: 'POST',
+     url: " http://hackerearth.0x10.info/api/ctz_coders?type=json&query=list_submissions&page=1",
+     // url: "sample.php",
+    //  data: myKeyVals,
+      dataType: "text",
+      success: function(resultData) { 
+		var data = JSON.parse(resultData);
+		//console.log(data);
+		commentList(data);
+		
+
+
+	  }
+}); 
+	saveData.error(function() { alert("Something went wrong"); });
+
+	
+});
+
+
+/**ar
+*commentList
+*
+*/
+function commentList (dataObject1)
+{
+	
+		dataObject = dataObject1["websites"];
+		for (x in dataObject) {
+		 	var code = dataObject[x]["source_code"];
+			var title = dataObject[x]["title"];
+			var language = dataObject[x]["language"];
+			var compiler_status = dataObject[x]["compiler_status"];
+		
+		console.log (title+language);
+		if  (compilerjson[x]["language"] == language)
+			icon = compilerjson[x]["icon"];
+		
+		
+	
+	appendTo = document.getElementById('container1');
+	lo_prop = {"id":"rowdiv", "class":"row", "name":"rowdiv"};
+	//console.log(lo_prop);
+	var manageAllTaskDivId = makeElement ("div", lo_prop);
+	appendTo.appendChild (manageAllTaskDivId);
+
+	lo_prop = {   "class":"media-list"};
+	//console.log(lo_prop);
+	var gs_ul = makeElement ("ul", lo_prop);
+	manageAllTaskDivId.appendChild (gs_ul);
+	//console.log(gs_cname);
+	
+	lo_prop = {  "class":"media"};
+	//console.log(lo_prop);
+	var gs_li = makeElement ("li", lo_prop);
+	gs_ul.appendChild (gs_li);
+	
+	lo_prop = { "class":"media-body"};
+	//console.log(lo_prop);
+	var bdydiv = makeElement ("div", lo_prop);
+	gs_li.appendChild (bdydiv);
+	
+	lo_prop = { "class":"well well-lg","style":"min-height:320px"};
+	//console.log(lo_prop);
+	var bdydiv2 = makeElement ("div", lo_prop);
+	bdydiv.appendChild (bdydiv2);
+	
+	
+	lo_prop = { "class":"pull-left"};
+	//console.log(lo_prop);
+	var alink = makeElement ("a", lo_prop);
+	bdydiv2.appendChild (alink);
+	
+	lo_prop = { "class":"code-name"};
+	//console.log(lo_prop);
+	var span1 = makeElement ("span", lo_prop);
+	bdydiv2.appendChild (span1);
+	span1.appendChild (document.createTextNode (title));
+	
+	lo_prop = { "class":"media-body"};
+	//console.log(lo_prop);
+	var bdydiv = makeElement ("div", lo_prop);
+	bdydiv2.appendChild (bdydiv);
+	
+	lo_prop = { "class":"well well-lg","style":"min-height:320px"};
+	//console.log(lo_prop);
+	var bdydiv3 = makeElement ("div", lo_prop);
+	bdydiv.appendChild (bdydiv3);
+	
+	
+	lo_prop = { "class":"foo blue"};
+	//console.log(lo_prop);
+	var bdydiv4 = makeElement ("div", lo_prop);
+	bdydiv3.appendChild (bdydiv4);
+	
+	lo_prop = { "class":"acceptance"};
+	//console.log(lo_prop);
+	var span1 = makeElement ("span", lo_prop);
+	bdydiv4.appendChild (span1);
+	span1.appendChild (document.createTextNode (compiler_status));
+
+	
+	lo_prop = { "class":"language"};
+	//console.log(lo_prop);
+	var span2 = makeElement ("span", lo_prop);
+	bdydiv4.appendChild (span2);
+	span2.appendChild (document.createTextNode (language));
+
+	
+	lo_prop = { "class":"displaycode","style":"min-height:320px"};
+	var bdydiv5 = makeElement ("div", lo_prop);
+	bdydiv3.appendChild (bdydiv5);
+	
+	
+	
+	var preEle = makeElement ("pre");
+	bdydiv5.appendChild (preEle);
+	
+	lo_prop = { "class":"html"};
+	var codeEle = makeElement ("code", lo_prop);
+	preEle.appendChild (codeEle);
+	codeEle.appendChild (document.createTextNode (code));
+	
+	lo_prop = { "class":"media-object img-circle","width":"60px","height":"60px","style":"margin-right:50px","src":icon,"alt":"profile"};
+	//console.log(lo_prop);
+	var img1 = makeElement ("img", lo_prop);
+	alink.appendChild (img1);
+	
+	
+	
+	}
+}
+
+</script>
+
+
+</body>
+</html>
